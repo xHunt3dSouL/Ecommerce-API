@@ -4,13 +4,14 @@
   "description": "Learning Ecommerce API",
   "main": "index.js",
   "scripts": {
-    "start" : "nodemon",
+    "start": "nodemon",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Sudarshan Dura",
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.2",
+    "hbs": "^4.2.0",
     "nodemon": "^2.0.22"
   }
 }
