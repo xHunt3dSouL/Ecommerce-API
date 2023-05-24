@@ -1,25 +1,32 @@
-const express = require('express');
+const express = require("express");
 const PORT = 5000;
 
-//calling file in the index
-const productRouter = require('./Route/product')
-const homeRouter = require('./Route/home')
-const errorRouter = require('./Route/error')
+// Importing routes
+const productRouter = require("./Route/product");
+const homeRouter = require("./Route/home");
+const errorRouter = require("./Route/error");
+const cors = require("cors");
+const morgan = require("morgan");
+const logger = require("./middlewares/logger");
 
-//creating a server
+// Creating an Express server
 const app = express();
 
-//link the routes file
-app.use(homeRouter)
-app.use("/api/product", productRouter)
-app.use(errorRouter)
+// Enable Cross-Origin Resource Sharing
+app.use(cors());
 
+// Custom middleware for logging
+app.use(logger);
+
+// Morgan middleware for logging HTTP requests
+app.use(morgan("dev"));
+
+// Linking the routes
+app.use(homeRouter); // Home route
+app.use("/api/product", productRouter); // Product route
+app.use(errorRouter); // Error route
+
+// Start the server
 app.listen(PORT, () => {
-    console.log(`Server Started At Port ${PORT}`)
+  console.log(`Server Started At Port ${PORT}`);
 });
-
-/*
-1.Route Params
-2.Query Strings
-*/
-

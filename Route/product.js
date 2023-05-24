@@ -1,59 +1,37 @@
-const express = require('express');
-const productData = require('../Data/product.json');
-//Initialize router object
+const express = require("express");
+const {
+  getAllProduct,
+  getSingleProduct,
+  createProduct,
+  replaceProduct,
+  updateProduct,
+  deleteProduct,
+} = require("../controllers/product");
+const checkAPIKey = require("../middlewares/auth");
+
+const logger = require("../middlewares/logger");
+
+// Initialize router object
 const router = express.Router();
 
-router.get("/", (req, res) => {
-    console.log(req.query)
-    const {category,minprice} = req.query;
-    // apply filter here
-    if(category && minprice){
-        const filteredData = productData.filter((element) =>{
-            return element.category === category && element.price >= minprice;
-    });
-    res.json(filteredData)
-}else if (category){
-    const filteredData = productData.filter((element) =>{
-        return element.category === category;
-});
-res.send(filteredData)
-}
-    if (minprice) {
-    const filteredData = productData.filter((element) =>{
-        return element.price >= minprice;
-    });
-    res.json(filteredData);
-    } 
-    else{
-    res.json(productData)
-    }
-});
+router.get("/", checkAPIKey, getAllProduct);
+// GET request for retrieving all products.
+// The `checkAPIKey` middleware is applied before `getAllProduct` controller function.
 
-router.get('/:productID', (req, res) => {
-    console.log(req.params)
-    const { productID } = req.params;
-    const product = productData.find((product) => product.id === Number(productID))
-    res.json(product ? product : "Index Not Found")
-});
+router.get("/:productID", getSingleProduct);
+// GET request for retrieving a single product by ID.
 
-//rest api
-// /api/product
+router.post("/", createProduct);
+// POST request for creating a new product.
 
-router.post("/", (req, res) => {
-    res.send("The api will create product in db")
-});
+router.put("/:productID", replaceProduct);
+// PUT request for replacing a product by ID.
 
-router.put("/:productID", (req, res) => {
-    res.send("The api will replace product in db")
-});
+router.patch("/:productID", updateProduct);
+// PATCH request for updating a product by ID.
 
-router.patch("/:productID", (req, res) => {
-    res.send("The api will update product in db")
-});
+router.delete("/:productID", deleteProduct);
+// DELETE request for deleting a product by ID.
 
-router.delete("/:productID", (req, res) => {
-    res.send("The api will delete product in db")
-});
-
-//export
+// Export the router object
 module.exports = router;
