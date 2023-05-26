@@ -3,21 +3,29 @@ const ProductModel = require("../models/product");
 // Function to get all products
 const getAllProduct = async (req, res) => {
   const { category, minprice } = req.query;
-  const productData = await ProductModel.find();
-  res.json(productData);
-  // Apply filters based on category and minprice
-  if (category && minprice) {
-    const filteredData = await ProductModel.find({ category, price: minprice });
-    res.json(filteredData);
-  } else if (category) {
-    const filteredData = await ProductModel.find({ category });
-    res.json(filteredData);
-  } else if (minprice) {
-    const filteredData = await ProductModel.find({ price: minprice });
-    res.json(filteredData);
-  } else {
-    const productData = await ProductModel.find();
-    res.json(productData);
+  try {
+    // Apply filters based on category and minprice
+    if (category && minprice) {
+      const filteredData = await ProductModel.find({
+        category,
+        price: minprice,
+      });
+      res.json(filteredData);
+    } else if (category) {
+      const filteredData = await ProductModel.find({ category });
+      res.json(filteredData);
+    } else if (minprice) {
+      const filteredData = await ProductModel.find({
+        price: { $gte: minprice },
+      });
+      res.json(filteredData);
+    } else {
+      const productData = await ProductModel.find();
+      res.json(productData);
+    }
+  } catch (err) {
+    console.log("Something went wrong");
+    res.status(500).json({ message: "Something went wrong", error: err });
   }
 };
 
@@ -28,37 +36,69 @@ const getSingleProduct = async (req, res) => {
     const product = await ProductModel.findById(productID);
     res.json(product ? product : "Product Not Found");
   } catch (err) {
-    console.log("Something Wrong");
+    console.log("Something went wrong");
     res.status(500).json({ message: "Something went wrong", error: err });
   }
 };
 
 // Function to create a product
-const createProduct = (req, res) => {
-  res.send("The API will create a product in the database");
+const createProduct = async (req, res) => {
+  console.log(req.body);
+  try {
+    const product = await ProductModel.create(req.body);
+    res.status(201).json(product); // Updated status code to 201 (Created)
+  } catch (err) {
+    console.log("Something went wrong");
+    res.status(500).json({ message: "Something went wrong", error: err });
+  }
 };
 
 // Function to replace a product
-const replaceProduct = (req, res) => {
-  res.send("The API will replace a product in the database");
+const replaceProduct = async (req, res) => {
+  const { productID } = req.params;
+  try {
+    const product = await ProductModel.findByIdAndUpdate(productID, req.body, {
+      new: true,
+    });
+    res.status(200).json(product);
+  } catch (err) {
+    console.log("Something went wrong");
+    res.status(500).json({ message: "Something went wrong", error: err });
+  }
 };
 
 // Function to update a product
-const updateProduct = (req, res) => {
-  res.send("The API will update a product in the database");
+const updateProduct = async (req, res) => {
+  const { productID } = req.params;
+  try {
+    const product = await ProductModel.findByIdAndUpdate(productID, req.body, {
+      new: true,
+    });
+    res.status(200).json(product);
+  } catch (err) {
+    console.log("Something went wrong");
+    res.status(500).json({ message: "Something went wrong", error: err });
+  }
 };
 
 // Function to delete a product
-const deleteProduct = (req, res) => {
-  res.send("The API will delete a product from the database");
+const deleteProduct = async (req, res) => {
+  const { productID } = req.params;
+  try {
+    const product = await ProductModel.findByIdAndDelete(productID);
+    res.status(200).json(product);
+  } catch (err) {
+    console.log("Something went wrong");
+    res.status(500).json({ message: "Something went wrong", error: err });
+  }
 };
 
 // Exporting the controller functions
 module.exports = {
-  getAllProduct, // Exporting the function to get all products
-  getSingleProduct, // Exporting the function to get a single product
-  createProduct, // Exporting the function to create a product
-  replaceProduct, // Exporting the function to replace a product
-  updateProduct, // Exporting the function to update a product
-  deleteProduct, // Exporting the function to delete a product
+  getAllProduct,
+  getSingleProduct,
+  createProduct,
+  replaceProduct,
+  updateProduct,
+  deleteProduct,
 };

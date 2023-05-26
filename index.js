@@ -24,6 +24,8 @@ app.use(logger);
 // Morgan middleware for logging HTTP requests
 app.use(morgan("dev"));
 
+app.use(express.json());
+
 // Linking the routes
 app.use(homeRouter); // Home route
 app.use("/api/product", productRouter); // Product route
