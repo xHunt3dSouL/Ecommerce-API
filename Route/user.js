@@ -6,20 +6,25 @@ const {
   deleteUser,
 } = require("../controllers/user");
 
+const {
+  verifyTokenUserOrAdmin,
+  verifyTokenAdmin,
+} = require("../middlewares/auth");
+
 // Initialize router object
 const router = express.Router();
 
-router.get("/", getAllUsers);
+router.get("/", verifyTokenAdmin, getAllUsers);
 // GET request for retrieving all users.
 // The `checkAPIKey` middleware is applied before `getAllUsers` controller function.
 
-router.get("/:userID", getSingleUser);
+router.get("/:userID", verifyTokenUserOrAdmin, getSingleUser);
 // GET request for retrieving a single user by ID.
 
-router.patch("/:userID", updateUser);
+router.patch("/:userID", verifyTokenUserOrAdmin, updateUser);
 // PATCH request for updating a user by ID.
 
-router.delete("/:userID", deleteUser);
+router.delete("/:userID", verifyTokenUserOrAdmin, deleteUser);
 // DELETE request for deleting a user by ID.
 
 // Export the router object

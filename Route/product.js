@@ -7,9 +7,7 @@ const {
   updateProduct,
   deleteProduct,
 } = require("../controllers/product");
-const checkAPIKey = require("../middlewares/auth");
-
-const logger = require("../middlewares/logger");
+const { checkAPIKey, verifyTokenAdmin } = require("../middlewares/auth");
 
 // Initialize router object
 const router = express.Router();
@@ -21,16 +19,16 @@ router.get("/", checkAPIKey, getAllProduct);
 router.get("/:productID", getSingleProduct);
 // GET request for retrieving a single product by ID.
 
-router.post("/", createProduct);
+router.post("/", verifyTokenAdmin, createProduct);
 // POST request for creating a new product.
 
-router.put("/:productID", replaceProduct);
+router.put("/:productID", verifyTokenAdmin, replaceProduct);
 // PUT request for replacing a product by ID.
 
-router.patch("/:productID", updateProduct);
+router.patch("/:productID", verifyTokenAdmin, updateProduct);
 // PATCH request for updating a product by ID.
 
-router.delete("/:productID", deleteProduct);
+router.delete("/:productID", verifyTokenAdmin, deleteProduct);
 // DELETE request for deleting a product by ID.
 
 // Export the router object
